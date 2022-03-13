@@ -32,6 +32,7 @@ program
     .option('-d, --post-data <bytes>', 'maximum POST data size to be returned')
     .option('-l, --parallel <n>', 'load <n> URLs in parallel')
     .option('--userMetric <js>', 'evaluate <js> after each page load and store the result in the HAR')
+    .option('-n, --emulate-network <preset-name>', 'emulate network conditions')
     .parse(process.argv);
 
 if (program.args.length === 0) {
@@ -115,7 +116,7 @@ function generatePostHook(userMetric) {
     };
 }
 
-const {host, port, width, height, content, cache, timeout, retry, retryDelay, abortOnFailure, postData, parallel, userMetric} = program;
+const {host, port, width, height, content, cache, timeout, retry, retryDelay, abortOnFailure, postData, parallel, userMetric, emulateNetwork} = program;
 CHC.run(program.args, {
     host, port,
     width, height,
@@ -126,7 +127,8 @@ CHC.run(program.args, {
     abortOnFailure,
     postData,
     parallel,
-    preHook, postHook: generatePostHook(userMetric)
+    preHook, postHook: generatePostHook(userMetric),
+    emulateNetwork
 }).on('load', (url) => {
     log(`- ${prettify(url)} `);
     if (parallel) {
